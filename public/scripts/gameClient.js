@@ -1,49 +1,34 @@
 'use strict';
 
-define(function () {
+define(['./network'], function (Network) {
 
     var host = 'ws://' + window.location.host + '/ws',
-        socket = null,
-        connected = false,
         type = '',
-        queue = [],
+        net = null,
         listeners = {};
 
-    function send(msg) {
-        if (connected && socket) {
-            if (typeof msg !== 'string') {
-                msg = JSON.stringify(msg);
-            }
-            socket.send(msg);
-            console.log('sent message: ', msg);
-        } else {
-            queue.push(msg);
-        }
+    function sendCmd(cmd, id, data) {
+        net.send({'cmd': cmd, 'data': data || {}});
     }
 
-    var GameServer = function (typeOfClient) {
+    var GameClient = function (typeOfClient) {
         type = typeOfClient;
 
-        socket = new WebSocket(host);
-
-        socket.onopen = onConnect;
-        socket.onclose = onDisconnect;
-        socket.onmessage = onMessage;
-        socket.onerror = console.error;
-
+        net = new Network(host);
+        net.on('connect', onConnect);
+        net.on('disconnect', onDisconnect);
+        net.on('message', onMessage);
+        net.on('error', console.error);
     };
 
-    GameServer.prototype.addEventListener = function (type, callback) {
+    GameClient.prototype.addEventListener = function (type, callback) {
         if (!listeners.hasOwnProperty(type)) {
             listeners[type] = callback;
         }
     };
 
-    GameServer.prototype.sendCmd = function (cmd, data) {
-        send({'cmd': cmd, 'data': data || {}});
-    };
+    GameClient.prototype.sendCmd = sendCmd;
 
-    // actions
     var connect = function () {
         sendEvent('connect');
     };
@@ -57,28 +42,15 @@ define(function () {
         'update': update
     };
 
-    // listeners
     var onConnect = function () {
-        connected = true;
-        console.log('Web browser connected!');
-        send(type);
+        net.send(type);
     };
 
     var onDisconnect = function () {
-        console.error('DISCONNECTED');
-        connected = false;
         sendEvent('disconnect');
     };
 
-    var onMessage = function (rawData) {
-        var data = {};
-        try {
-            data = JSON.parse(rawData.data);
-        } catch (e) {
-            console.error('Error parsing message in onMessage: ', e);
-        }
-        if (!connected) return;
-
+    var onMessage = function (data) {
         var handler = handlers[data.action];
         if (handler) {
             handler(data.data);
@@ -87,7 +59,6 @@ define(function () {
         }
     };
 
-    // call listener
     function sendEvent (type, args) {
         var callback = listeners[type];
         if (callback) {
@@ -95,7 +66,7 @@ define(function () {
         }
     }
 
-    return GameServer;
+    return GameClient;
 
 });
 
