@@ -2,7 +2,6 @@ package game
 
 import (
 	"code.google.com/p/go.net/websocket"
-	"fmt"
 )
 
 type player struct {
@@ -25,21 +24,14 @@ func getGameID(ws *websocket.Conn) string {
 	for {
 		var cmd command
 		err := websocket.JSON.Receive(ws, &cmd)
-
 		if err != nil || cmd.Data["gameID"] == nil {
-			fmt.Println("Error handling player connection")
 			break
 		}
 
 		var gameID string = cmd.Data["gameID"].(string)
-
-		fmt.Println(gameID)
 		g := games[gameID]
-
 		if g != nil {
 			return gameID
-		} else {
-			fmt.Println("This game session does not exist, try again")
 		}
 	}
 
@@ -48,8 +40,6 @@ func getGameID(ws *websocket.Conn) string {
 
 // player connected
 func joinGame(ws *websocket.Conn, gameID string) {
-	fmt.Println("Joining game ", gameID)
-
 	g := games[gameID]
 	g.count++
 	playerID := g.count
@@ -76,11 +66,8 @@ func (p *player) receiver() {
 		var cmd command
 		err := websocket.JSON.Receive(p.ws, &cmd)
 		if err != nil {
-			fmt.Printf("Got from player: %+v\n", cmd)
-			fmt.Printf("Error", err)
 			break
 		}
-		fmt.Println("Adding command to toGame")
 		act := wrapCommand(cmd, "updatePlayer", p.id)
 		p.toGame <- &act
 	}
@@ -89,10 +76,8 @@ func (p *player) receiver() {
 // from game to player
 func (p *player) sender() {
 	for a := range p.send {
-		fmt.Printf("Sending to player: %+v\n", a)
 		err := websocket.JSON.Send(p.ws, a)
 		if err != nil {
-			fmt.Println("Error sending command to player " + string(p.id))
 			break
 		}
 	}

@@ -31,6 +31,7 @@ func main() {
 	http.Handle("/", http.FileServer(http.Dir("public/")))
 	http.Handle("/ws", websocket.Handler(handleConnection))
 
+	log.Println("Server listening on port", *addr)
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
 		log.Fatal("unable to start server")

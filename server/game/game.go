@@ -3,7 +3,6 @@ package game
 import (
 	"../utils"
 	"code.google.com/p/go.net/websocket"
-	"fmt"
 )
 
 const (
@@ -98,7 +97,6 @@ func (g *game) receiver() {
 		var cmd command
 		err := websocket.JSON.Receive(g.ws, &cmd)
 		if err != nil {
-			fmt.Printf("Got from web: %+v\n", cmd)
 			break
 		}
 		if cmd.PlayerID > 0 && g.players[cmd.PlayerID] != nil {
@@ -112,10 +110,8 @@ func (g *game) receiver() {
 // from players to web game
 func (g *game) sender() {
 	for cmd := range g.toGame {
-		fmt.Printf("Sending to game: %+v\n", cmd)
 		err := websocket.JSON.Send(g.ws, cmd)
 		if err != nil {
-			fmt.Println("Error sending command to game")
 			break
 		}
 	}
@@ -163,7 +159,6 @@ func (g *game) registration() {
 
 func (g *game) removePlayer(p *player) {
 	if _, in := g.players[p.id]; in {
-		fmt.Println("Removing player", p.id)
 		g.toGame <- &action{
 			Action: "removePlayer",
 			Data: command{
@@ -172,8 +167,6 @@ func (g *game) removePlayer(p *player) {
 		}
 		delete(g.players, p.id)
 		p.clean()
-	} else {
-		fmt.Println("player", p.id, "already removed")
 	}
 }
 
