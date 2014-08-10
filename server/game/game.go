@@ -1,190 +1,189 @@
 package game
 
 import (
-	"../utils"
-	"code.google.com/p/go.net/websocket"
-	"fmt"
+    "../utils"
+    "code.google.com/p/go.net/websocket"
+    "fmt"
 )
 
 const (
-	GAME_ID_LENGTH = 7
+    GAME_ID_LENGTH = 7
 )
 
 type game struct {
-	gameID     string
-	count      uint32
-	ws         *websocket.Conn
-	register   chan *player
-	unregister chan *player
-	players    map[uint32]*player
-	toGame     chan *action
+    gameID     string
+    count      uint32
+    ws         *websocket.Conn
+    register   chan *player
+    unregister chan *player
+    players    map[uint32]*player
+    toGame     chan *action
 }
 
 // input
 type command struct {
-	Cmd      string                 `json:"cmd"`
-	PlayerID uint32                 `json:"playerID"`
-	Data     map[string]interface{} `json:"data"`
+    Cmd      string                 `json:"cmd"`
+    PlayerID uint32                 `json:"playerID"`
+    Data     map[string]interface{} `json:"data"`
 }
 
 type action struct {
-	Action string  `json:"action"`
-	Data   command `json:"data"`
+    Action string  `json:"action"`
+    Data   command `json:"data"`
 }
 
 func wrapCommand(cmd command, a string, playerID uint32) action {
-	var act action
-	act.Action = a
-	cmd.PlayerID = playerID
-	act.Data = cmd
-	return act
+    var act action
+    act.Action = a
+    cmd.PlayerID = playerID
+    act.Data = cmd
+    return act
 }
 
 var games map[string]*game = make(map[string]*game)
 
 // Generate a new <GAME_ID_LENGTH> characters game ID until one is available
 func generateGameID(res chan string) {
-	for {
-		id := utils.RandomString(GAME_ID_LENGTH)
-		if games[id] == nil {
-			res <- id
-			break
-		}
-	}
+    for {
+        id := utils.RandomString(GAME_ID_LENGTH)
+        if games[id] == nil {
+            res <- id
+            break
+        }
+    }
 }
 
 // Create a new game session using the provided websocket connection
 func CreateNewGame(ws *websocket.Conn) {
-	gameIDChan := make(chan string)
-	go generateGameID(gameIDChan)
-	gameID := <-gameIDChan
-	close(gameIDChan)
+    gameIDChan := make(chan string)
+    go generateGameID(gameIDChan)
+    gameID := <-gameIDChan
+    close(gameIDChan)
 
-	g := game{
-		gameID:     gameID,
-		count:      0,
-		ws:         ws,
-		register:   make(chan *player),
-		unregister: make(chan *player),
-		players:    make(map[uint32]*player),
-		toGame:     make(chan *action),
-	}
+    g := game{
+        gameID:     gameID,
+        count:      0,
+        ws:         ws,
+        register:   make(chan *player),
+        unregister: make(chan *player),
+        players:    make(map[uint32]*player),
+        toGame:     make(chan *action),
+    }
 
-	games[gameID] = &g
+    games[gameID] = &g
 
-	defer func() {
-		g.clean()
-	}()
+    defer func() {
+        g.clean()
+    }()
 
-	go g.registration()
-	go g.sender()
+    go g.registration()
+    go g.sender()
 
-	// send back game ID
+    // send back game ID
 
-	a := wrapCommand(command{
-		Data: map[string]interface{}{
-			"gameID": gameID,
-		},
-	}, "gameID", 0)
+    a := wrapCommand(command{
+        Data: map[string]interface{}{
+            "gameID": gameID,
+        },
+    }, "gameID", 0)
 
-	g.toGame <- &a
-
-	g.receiver()
+    g.toGame <- &a
+    g.receiver()
 
 }
 
 // from web game to players
 func (g *game) receiver() {
-	for {
-		var cmd command
-		err := websocket.JSON.Receive(g.ws, &cmd)
-		if err != nil {
-			fmt.Printf("Got from web: %+v\n", cmd)
-			break
-		}
-		if cmd.PlayerID > 0 && g.players[cmd.PlayerID] != nil {
-			p := g.players[cmd.PlayerID]
-			a := wrapCommand(cmd, "update", cmd.PlayerID)
-			p.send <- &a
-		}
-	}
+    for {
+        var cmd command
+        err := websocket.JSON.Receive(g.ws, &cmd)
+        if err != nil {
+            fmt.Printf("Got from web: %+v\n", cmd)
+            break
+        }
+        if cmd.PlayerID > 0 && g.players[cmd.PlayerID] != nil {
+            p := g.players[cmd.PlayerID]
+            a := wrapCommand(cmd, "update", cmd.PlayerID)
+            p.send <- &a
+        }
+    }
 }
 
 // from players to web game
 func (g *game) sender() {
-	for cmd := range g.toGame {
-		fmt.Printf("Sending to game: %+v\n", cmd)
-		err := websocket.JSON.Send(g.ws, cmd)
-		if err != nil {
-			fmt.Println("Error sending command to game")
-			break
-		}
-	}
+    for cmd := range g.toGame {
+        fmt.Printf("Sending to game: %+v\n", cmd)
+        err := websocket.JSON.Send(g.ws, cmd)
+        if err != nil {
+            fmt.Println("Error sending command to game")
+            break
+        }
+    }
 }
 
 func (g *game) registration() {
-	toClose := false
-	for {
-		select {
-		case p, ok := <-g.register:
-			if !ok {
-				toClose = true
-				break
-			}
-			g.players[p.id] = p
+    toClose := false
+    for {
+        select {
+        case p, ok := <-g.register:
+            if !ok {
+                toClose = true
+                break
+            }
+            g.players[p.id] = p
 
-			connectCmd := command{
-				PlayerID: p.id,
-			}
+            connectCmd := command{
+                PlayerID: p.id,
+            }
 
-			// ack player
-			p.send <- &action{
-				Action: "connect",
-				Data:   connectCmd,
-			}
+            // ack player
+            p.send <- &action{
+                Action: "connect",
+                Data:   connectCmd,
+            }
 
-			// ack game
-			g.toGame <- &action{
-				Action: "addPlayer",
-				Data:   connectCmd,
-			}
-		case p, ok := <-g.unregister:
-			if !ok {
-				toClose = true
-				break
-			}
-			g.removePlayer(p)
-		}
+            // ack game
+            g.toGame <- &action{
+                Action: "addPlayer",
+                Data:   connectCmd,
+            }
+        case p, ok := <-g.unregister:
+            if !ok {
+                toClose = true
+                break
+            }
+            g.removePlayer(p)
+        }
 
-		if toClose {
-			break
-		}
-	}
+        if toClose {
+            break
+        }
+    }
 }
 
 func (g *game) removePlayer(p *player) {
-	if _, in := g.players[p.id]; in {
-		fmt.Println("Removing player", p.id)
-		g.toGame <- &action{
-			Action: "removePlayer",
-			Data: command{
-				PlayerID: p.id,
-			},
-		}
-		delete(g.players, p.id)
-		p.clean()
-	} else {
-		fmt.Println("player", p.id, "already removed")
-	}
+    if _, in := g.players[p.id]; in {
+        fmt.Println("Removing player", p.id)
+        g.toGame <- &action{
+            Action: "removePlayer",
+            Data: command{
+                PlayerID: p.id,
+            },
+        }
+        delete(g.players, p.id)
+        p.clean()
+    } else {
+        fmt.Println("player", p.id, "already removed")
+    }
 }
 
 func (g *game) clean() {
-	for _, p := range g.players {
-		g.removePlayer(p)
-	}
-	close(g.register)
-	close(g.unregister)
-	close(g.toGame)
-	delete(games, g.gameID)
-	go g.ws.Close()
+    for _, p := range g.players {
+        g.removePlayer(p)
+    }
+    close(g.register)
+    close(g.unregister)
+    close(g.toGame)
+    delete(games, g.gameID)
+    go g.ws.Close()
 }
