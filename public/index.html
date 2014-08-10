@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta http-equiv = 'Content-Language' content = 'en'/>
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="format-detection" content="telephone=no" />
+
+  <title>TwinFusion Controls</title>
+
+  <link rel="stylesheet" href="css/aurora.css">
+
+
+  </head>
+  <body>
+      <div id="loadingPannel" class="outerWrapper">
+            <div height="250px" width="250px" class = "innerWrapper">
+              <img src="assets/img/connecting.gif" height="250px" width="250px" />
+            </div>
+      </div>
+
+      <div id="victoryPannel" class="outerWrapper">
+            <div height="250px" width="250px" class = "innerWrapper">
+              <img src="assets/img/VictoryPanel.gif" height="250px" width="250px" />
+            </div>
+      </div>
+
+      <div id="gameIDInput" class="outerWrapper">
+            <div height="250px" width="250px" class = "innerWrapper">
+              <input id="gameID" class="gameIDInput" type="text" maxlength="7" size="7">
+              <button id="joinGame">JOIN</button>
+            </div>
+      </div>
+
+    <div id="outerGamePad" class="outerWrapper">
+      <div id="gamePadWheel" height="250px" width="250px" class = "innerWrapper">
+        <div class = "arrow" id = "up"> </div>
+        <div class = "arrow" id = "down"> </div>
+        <div class = "arrow" id = "left"> </div>
+        <div class = "arrow" id = "right"> </div>
+
+        <div class = "arrowHover" id = "upPressed"> </div>
+        <div class = "arrowHover" id = "downPressed"> </div>
+        <div class = "arrowHover" id = "leftPressed"> </div>
+        <div class = "arrowHover" id = "rightPressed"> </div>
+      </div>
+    </div>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.2/jquery.mobile.min.js"></script>
+  <script src="scripts/sound.js"></script>
+  <script data-main="scripts/auroracontroller.js" src="libs/require.js"></script>
+
+  </body>
+</html>
+
+

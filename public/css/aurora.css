@@ -1,0 +1,147 @@
+body {
+  background-image: url('../assets/img/background.png');
+  overflow: hidden;
+  background-repeat:no-repeat;
+  -webkit-background-size: cover; /* For WebKit*/
+  -moz-background-size: cover;    /* Mozilla*/
+  -o-background-size: cover;      /* Opera*/
+  background-size: cover;
+  height: 100%;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+
+#gamePadWheel {
+  background-image: url('../assets/img/gamePad.png');
+  display: none;
+  height: 250px;
+  width: 250px;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+#victoryPannel {
+  display: none;
+}
+
+#left {
+  background-image: url('../assets/img/leftArrow.png');
+  top: 80px;
+  left: -18px;
+}
+#right {
+  background-image: url('../assets/img/rightArrow.png');
+  top: 80px;
+  left: 183px;
+}
+#up {
+  background-image: url('../assets/img/upArrow.png');
+  top: -24px;
+  left: 80px;
+}
+#down {
+  background-image: url('../assets/img/downArrow.png');
+  top: 183px;
+  left: 80px;
+}
+
+.arrowHover {
+  width: 90px;
+  height: 90px;
+  z-index: 10;
+  position: absolute;
+  display: none;
+}
+
+#leftPressed {
+  background-image: url('../assets/img/leftArrowPressed.png');
+  top: 80px;
+  left: -18px;
+}
+#rightPressed {
+  background-image: url('../assets/img/rightArrowPressed.png');
+  top: 80px;
+  left: 183px;
+}
+#upPressed {
+  background-image: url('../assets/img/upArrowPressed.png');
+  top: -24px;
+  left: 80px;
+}
+
+#downPressed {
+  background-image: url('../assets/img/downArrowPressed.png');
+  top: 183px;
+  left: 80px;
+}
+
+#startButton {
+  background-image: url('../assets/img/startButton.png');
+}
+
+#startButtonPressed {
+  background-image: url('../assets/img/startButtonPressed.png');
+}
+
+.ui-page {
+  height: 100%;
+}
+
+.arrow {
+  position: absolute;
+  height: 90px;
+  width: 90px;
+}
+
+#outerGamePad {
+  display: none;
+}
+
+/* vertical and horizontal centering
+http://stackoverflow.com/questions/17213113/vertical-centering-flexbox-overlay-in-ios-safari
+*/
+.outerWrapper {
+  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox; /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-flex-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  position:fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.innerWrapper {
+    margin: auto;
+    position: relative;
+}
+
+.gameIDInput {
+  /*height: 100px;*/
+  /*width: 400px;*/
+  z-index: 10000;
+  font-size: 50px;
+  font-family: monospace;
+}
+
+.hft-instruction {
+  display: none;
+}
+
+.hft-portrait {
+  display: none;
+}
+
+.ui-loader {
+  display: none;
+}

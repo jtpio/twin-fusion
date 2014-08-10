@@ -1,0 +1,26 @@
+<html>
+<head>
+
+</head>
+
+<body>
+WTF
+	<script type="text/javascript">
+		var socket = new WebSocket('ws://127.0.0.1:12345/echo');
+        socket.onopen = function () {
+        	// socket.send({'test': 'oui'});
+        };
+
+        socket.onerror = function (err) {
+        	console.log(err);
+        };
+
+        socket.onmessage = function (msg) {
+        	console.log(JSON.parse(msg.data));
+                socket.send(JSON.parse(msg.data))
+                // socket.send({cmd: 'move'/*, data: {speed: 5, x: -1, y:0}*/})
+        };
+
+	</script>
+</body>
+</html>
