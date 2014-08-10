@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	GAME_ID_LENGTH = 7
+	GAME_ID_LENGTH = 1
 )
 
 type game struct {
@@ -50,6 +50,7 @@ func generateGameID(res chan string) {
 			break
 		}
 	}
+	close(res)
 }
 
 // Create a new game session using the provided websocket connection
@@ -57,7 +58,6 @@ func CreateNewGame(ws *websocket.Conn) {
 	gameIDChan := make(chan string)
 	go generateGameID(gameIDChan)
 	gameID := <-gameIDChan
-	close(gameIDChan)
 
 	g := game{
 		gameID:     gameID,
@@ -174,8 +174,6 @@ func (g *game) clean() {
 	for _, p := range g.players {
 		g.removePlayer(p)
 	}
-	close(g.register)
-	close(g.unregister)
 	close(g.toGame)
 	delete(games, g.gameID)
 	go g.ws.Close()

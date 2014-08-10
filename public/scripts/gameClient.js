@@ -7,7 +7,7 @@ define(['./network'], function (Network) {
         net = null,
         listeners = {};
 
-    function sendCmd(cmd, id, data) {
+    function sendCmd(cmd, data) {
         net.send({'cmd': cmd, 'data': data || {}});
     }
 

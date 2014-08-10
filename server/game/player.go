@@ -52,7 +52,7 @@ func joinGame(ws *websocket.Conn, gameID string) {
 
 	g.register <- &p
 	defer func() {
-		g.removePlayer(&p) // TODO: use channels instead
+		g.unregister <- &p
 	}()
 
 	go p.sender()
