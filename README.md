@@ -9,6 +9,10 @@ The original game was made in 48 hours during the Arabic Game Jam 2014 in Malmö
 
 This is continuation of the original game to make it playable online with multiple sessions at the same time, and also to add more stuff.
 
+At the game jam, we used the awesome HappyFunTimes (https://github.com/greggman/HappyFunTimes) to get setup very quickly, so we didn't have to put too much effort on the network part.
+
+So the actual code is inspired by the way HFT works, except that it is now simplified a lot to remove all the dependencies and libraries that we don't need.
+
 # Credits
 
 * Erik Nilsson - Art
