@@ -13,6 +13,8 @@ At the game jam, we used the awesome HappyFunTimes (https://github.com/greggman/
 
 So the actual code is inspired by the way HFT works, except that it is now simplified a lot to remove all the dependencies and libraries that we don't need.
 
+Made with [Phaser](http://phaser.io/)
+
 # Credits
 
 * Erik Nilsson - Art
