@@ -161,11 +161,11 @@ define(['./settings', './map'], function (Settings, Map) {
 
         sprite.body.setSize(46, 116 / 2, 0, 116 / 4);
         sprite.body.collideWorldBounds = true;
-        sprite.body.bounce.x = 0.5;
-        sprite.body.bounce.y = 0.5;
+        sprite.body.bounce.x = 0.8;
+        sprite.body.bounce.y = 0.8;
         sprite.body.minBounceVelocity = 0;
         sprite.body.linearDamping = 1;
-        sprite.body.mass = 1000;
+        sprite.body.mass = 3000;
         sprite.tint = tint;
         sprite.z = 5;
     };
