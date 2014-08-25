@@ -50,6 +50,8 @@ requirejs([
         game.load.image('startButton', 'assets/img/guiStartButton.png');
         game.load.image('credits', 'assets/img/credits.png');
         game.load.image('wall', 'assets/img/wall.png');
+        game.load.image('fullscreenEnter', 'assets/img/fullscreen-enter.png');
+        game.load.image('wall', 'assets/img/wall.png');
         game.load.atlas('spritesheet', 'assets/img/spritesheet.png', 'assets/img/spritesheet.json');
 
         // audio
@@ -63,7 +65,7 @@ requirejs([
     }
 
     function create () {
-        game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+        game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.add.image(0, 0, 'playfield');
         playerManager.createGroup();
@@ -103,6 +105,8 @@ requirejs([
 
         setupServer();
 
+        game.add.button(game.world.width - 50, game.world.height - 50, 'fullscreenEnter', toggleFullScreen);
+
     }
 
     function update () {
@@ -111,6 +115,14 @@ requirejs([
 
     function render () {
         // playerManager.debug();
+    }
+
+    function toggleFullScreen() {
+        if (game.scale.isFullScreen) {
+            game.scale.stopFullScreen();
+        } else {
+            game.scale.startFullScreen();
+        }
     }
 
 });
