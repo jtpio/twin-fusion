@@ -119,6 +119,7 @@ http://stackoverflow.com/questions/17213113/vertical-centering-flexbox-overlay-i
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  text-align: center;
 }
 
 .innerWrapper {
@@ -130,9 +131,40 @@ http://stackoverflow.com/questions/17213113/vertical-centering-flexbox-overlay-i
   /*height: 100px;*/
   /*width: 400px;*/
   z-index: 10000;
-  font-size: 50px;
+  font-size: 40px;
   font-family: monospace;
   text-transform: uppercase;
+  border: 5px solid #343013;
+  background: #e6a651;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-box-shadow: rgba(255,255,255,0.4) 0 0px 0, inset rgba(000,000,000,0.7) 0 0px 0px;
+  -moz-box-shadow: rgba(255,255,255,0.4) 0 0px 0, inset rgba(000,000,000,0.7) 0 0px 0px;
+  box-shadow: rgba(255,255,255,0.4) 0 0px 0, inset rgba(000,000,000,0.7) 0 0px 0px;
+  margin-bottom: 8px;
+}
+
+.joinGameButton {
+  border: 4px solid #343013;
+  background: #e6a651;
+  background: -webkit-gradient(linear, left top, left bottom, from(#e6a651), to(#e6a651));
+  background: -webkit-linear-gradient(top, #e6a651, #e6a651);
+  background: -moz-linear-gradient(top, #e6a651, #e6a651);
+  background: -ms-linear-gradient(top, #e6a651, #e6a651);
+  background: -o-linear-gradient(top, #e6a651, #e6a651);
+  background-image: -ms-linear-gradient(top, #e6a651 0%, #e6a651 100%);
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-box-shadow: rgba(255,255,255,0.4) 0 0px 0, inset rgba(255,255,255,0.4) 0 0px 0;
+  -moz-box-shadow: rgba(255,255,255,0.4) 0 0px 0, inset rgba(255,255,255,0.4) 0 0px 0;
+  box-shadow: rgba(255,255,255,0.4) 0 0px 0, inset rgba(255,255,255,0.4) 0 0px 0;
+  text-shadow: #addc7e 0 1px 0;
+  color: #000000;
+  padding: 8.5px 18px;
+  font-size: 16px;
+  text-decoration: none;
 }
 
 .hft-instruction {
