@@ -152,7 +152,7 @@ var main = function(GameClient) {
         GameControls.prototype.attachEnterKey = function () {
             var _self = this;
             $('#joinGame').click(function (e) {
-              gameClient.sendCmd('gameID', { gameID: $('#gameID').val().toLowerCase() });
+              gameClient.sendCmd('gameID', { gameID: $('#gameID').val().toUpperCase() });
             });
         };
 

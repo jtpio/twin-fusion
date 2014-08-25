@@ -132,6 +132,7 @@ http://stackoverflow.com/questions/17213113/vertical-centering-flexbox-overlay-i
   z-index: 10000;
   font-size: 50px;
   font-family: monospace;
+  text-transform: uppercase;
 }
 
 .hft-instruction {
