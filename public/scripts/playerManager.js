@@ -11,10 +11,15 @@ define(['./settings', './map'], function (Settings, Map) {
 
     var spawns = [
         [200, 200],
-        // [50, Settings.HEIGHT - 50],
-        // [Settings.WIDTH, 50],
         [Settings.WIDTH - 200, Settings.HEIGHT - 200]
     ];
+
+    function randomPos (spawn) {
+        return {
+            x: game.rnd.integerInRange(spawn[0] - 100, spawn[0] + 100),
+            y: game.rnd.integerInRange(spawn[1] - 100, spawn[1] + 100)
+        };
+    }
 
     var PlayerManager = function (g, effects, s) {
         game = g;
@@ -74,12 +79,15 @@ define(['./settings', './map'], function (Settings, Map) {
             if (index > -1) {
                 self.queue.splice(index, 1);
             }
-            netPlayer.removeAllListeners();
             var player = self.players[netPlayer.id];
             if (!player) return;
 
             player.left = true;
             if (self.players[player.pair].left) {
+                // remove listeners at the same time as the sprite because they can be used to
+                // disconnect a player
+                netPlayer.removeAllListeners();
+                self.players[player.pair].conn.removeEventListener();
                 // remove the 2 sprites
                 player.sprite.destroy();
                 self.players[player.pair].sprite.destroy();
@@ -116,11 +124,11 @@ define(['./settings', './map'], function (Settings, Map) {
         }
 
         var p1 = this.queue.shift(),
-            p2 = this.queue.shift(),
-            tint = game.rnd.integerInRange(Settings.COLOR_RANGE.START, Settings.COLOR_RANGE.END);
+            p2 = this.queue.shift();
 
-        this.setupPlayer(p1, p2, tint, spawns[0]);
-        this.setupPlayer(p2, p1, tint, spawns[1]);
+        this.setupPlayer(p1);
+        this.setupPlayer(p2);
+        this.bindPlayers(p1.id, p2.id);
     };
 
     PlayerManager.prototype.createGroup = function() {
@@ -128,15 +136,74 @@ define(['./settings', './map'], function (Settings, Map) {
         this.walls = game.add.group();
     };
 
+    PlayerManager.prototype.reset = function() {
+        var self = this;
+        map.reset();
+        var players = Object.keys(this.players);
+        players.forEach(function (pId) {
+            self.resetPlayer(self.players[pId]);
+            self.players[pId].conn.sendCmd('connect');
+        });
+        players = _.shuffle(players);
+        for (var i = 0; i < players.length; i += 2) {
+            self.bindPlayers(players[i], players[i + 1]);
+            // if these 2 players have left, send a disconnect event to remove them
+            if (self.players[players[i]].left && self.players[players[i+1]].left) {
+                self.players[players[i]].conn.sendEvent('disconnect');
+            }
+        }
+    };
+
     PlayerManager.prototype.togglePlayers = function(enable) {
         this.sprites.setAll('alpha', enable ? 1 : 0);
     };
 
-    PlayerManager.prototype.setupPlayer = function (p1, p2, tint, pos) {
+    PlayerManager.prototype.resetPlayer = function (p) {
+        if (p.oldSprite) {
+            p.sprite = p.oldSprite;
+        }
+        var sprite = p.sprite;
+        sprite.anchor.x = 0.5;
+        sprite.anchor.y = 0.5;
+        sprite.scale.x = 0.75;
+        sprite.scale.y = 0.75;
+        sprite.body.setSize(46, 116 / 2, 0, 116 / 4);
+        sprite.body.collideWorldBounds = true;
+        sprite.body.bounce.x = 0.8;
+        sprite.body.bounce.y = 0.8;
+        sprite.body.minBounceVelocity = 0;
+        sprite.body.linearDamping = 1;
+        sprite.body.mass = 3000;
+        sprite.z = 5;
+        sprite.revive();
+
+        // removing old properties
+        delete p.merged;
+        delete p.winner;
+        delete p.pair;
+        delete p.oldSprite;
+    };
+
+    PlayerManager.prototype.bindPlayers = function (id1, id2) {
+        var p1 = this.players[id1];
+        var p2 = this.players[id2];
+        var tint = game.rnd.integerInRange(Settings.COLOR_RANGE.START, Settings.COLOR_RANGE.END);
+        p1.tint = p1.sprite.tint = p2.tint = p2.sprite.tint = tint;
+        p1.pair = p2.id;
+        p2.pair = p1.id;
+        var posP1 = randomPos(spawns[0]);
+        var posP2 = randomPos(spawns[1]);
+        p1.sprite.x = posP1.x;
+        p1.sprite.y = posP1.y;
+        p2.sprite.x = posP2.x;
+        p2.sprite.y = posP2.y;
+    }
+
+    PlayerManager.prototype.setupPlayer = function (p1) {
         if (!this.sprites) return;
 
-        // var sprite = this.sprites.create(game.rnd.integerInRange(0, game.world.width), game.rnd.integerInRange(0, game.world.height), 'spritesheet', 'player0001-idle.png');
-        var sprite = this.sprites.create(game.rnd.integerInRange(pos[0] - 100, pos[0] + 100), game.rnd.integerInRange(pos[1] - 100, pos[1] + 100), 'spritesheet', 'player0001-idle.png');
+        // create the sprite only once
+        var sprite = this.sprites.create(0, 0, 'spritesheet', 'player0001-idle.png');
 
         // animation
         sprite.animations.add('idle', Phaser.Animation.generateFrameNames('player', 1, 4, '-idle.png', 4), 7, true);
@@ -147,27 +214,13 @@ define(['./settings', './map'], function (Settings, Map) {
         sprite.body.collideWorldBounds = true;
 
         this.players[p1.id] = {
+            'id': p1.id,
             'sprite': sprite,
-            'pair': p2.id,
             'conn': p1
         };
 
         sprite.pid = p1.id;
-
-        sprite.anchor.x = 0.5;
-        sprite.anchor.y = 0.5;
-        sprite.scale.x = 0.75;
-        sprite.scale.y = 0.75;
-
-        sprite.body.setSize(46, 116 / 2, 0, 116 / 4);
-        sprite.body.collideWorldBounds = true;
-        sprite.body.bounce.x = 0.8;
-        sprite.body.bounce.y = 0.8;
-        sprite.body.minBounceVelocity = 0;
-        sprite.body.linearDamping = 1;
-        sprite.body.mass = 3000;
-        sprite.tint = tint;
-        sprite.z = 5;
+        this.resetPlayer(this.players[p1.id]);
     };
 
     PlayerManager.prototype.update = function() {
@@ -193,7 +246,6 @@ define(['./settings', './map'], function (Settings, Map) {
         }, null, this);
 
 
-
         if (AUR.state !== 'PLAY') return;
 
         for (var p in this.players) {
@@ -214,7 +266,8 @@ define(['./settings', './map'], function (Settings, Map) {
 
                 (function (playerToRemove, playerToMergeWith) {
                     scale.onComplete.add(function () {
-                        playerToRemove.sprite.destroy();
+                        playerToRemove.oldSprite = playerToRemove.sprite;
+                        playerToRemove.oldSprite.kill();
                         playerToRemove.sprite = playerToMergeWith.sprite;
                         playerToMergeWith.sprite.scale.x = 1.2;
                         playerToMergeWith.sprite.scale.y = 1.2;

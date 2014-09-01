@@ -24,7 +24,7 @@ define(['./settings'], function (Settings) {
             });
             var spot = spots[Math.random() > 0.5 ? 0 : 1];
             this.exit = game.add.sprite(spot[0], spot[1], 'spritesheet', 'portal0001-idle.png');
-            game.add.tween(this.exit.scale).to({ 'x': 1.5, 'y': 1.5 }, 500, Phaser.Easing.Cubic.In, true, 0, 1000, true);
+            this.exitTween = game.add.tween(this.exit.scale).to({ 'x': 1.5, 'y': 1.5 }, 500, Phaser.Easing.Cubic.In, true, 0, 1000, true);
 
             this.exit.anchor.x = 0.5;
             this.exit.anchor.y = 0.5;
@@ -55,6 +55,18 @@ define(['./settings'], function (Settings) {
         }
 
         return {};
+    };
+
+    Map.prototype.reset = function() {
+        if (this.exit) {
+            this.exit.destroy();
+            this.exit = null;
+        }
+        if (this.exitTween) {
+            this.exitTween.stop();
+            this.exitTween = null;
+        }
+        this.exitTriggered = false;
     };
 
     return Map;

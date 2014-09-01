@@ -69,7 +69,6 @@ requirejs([
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.add.image(0, 0, 'playfield');
         playerManager.createGroup();
-        vfx.createClouds();
         playerManager.createText();
 
         sound.loadSounds('hit02', 1, false);
@@ -97,9 +96,6 @@ requirejs([
             });
         });
 
-        AUR.credits = game.add.sprite(0, 0, 'credits');
-        AUR.credits.alpha = 0;
-
         // SPEECH!
         if (Settings.ENABLE_SPEECH) speech.defineListeners();
 
@@ -107,6 +103,23 @@ requirejs([
 
         game.add.button(game.world.width - 50, game.world.height - 50, 'fullscreenEnter', toggleFullScreen);
 
+        // restart button, not visible at startup
+        AUR.restart = game.add.text(game.world.centerX, game.world.centerY, "Restart!", { font: "65px Arial", fill: "#ffffff", align: "center" });
+        AUR.restart.anchor.set(0.5);
+        AUR.restart.alpha = 0;
+        AUR.restart.inputEnabled = true;
+        AUR.restart.events.onInputUp.add(restart, this);
+
+        // vfx uses the sound
+        vfx.init();
+
+    }
+
+    function restart () {
+        AUR.restart.alpha = 0;
+        AUR.state = 'PLAY';
+        playerManager.reset();
+        vfx.reset();
     }
 
     function update () {

@@ -17,6 +17,10 @@ define(['./settings'], function (Settings) {
         sounds[name].play();
     };
 
+    SoundManager.prototype.stop = function(name) {
+        sounds[name].stop();
+    };
+
     return SoundManager;
 
 });

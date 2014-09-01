@@ -37,7 +37,7 @@ var main = function(GameClient) {
           $('#outerGamePad').hide();
           var victoryPannel = document.getElementById('victoryPannel');
           victoryPannel.style.display = 'flex';
-          new Sound().startSound('assets/winning.mp3', true);
+          //new Sound().startSound('assets/winning.mp3', true);
       };
 
       Game.prototype.start = function () {
@@ -48,6 +48,9 @@ var main = function(GameClient) {
         $('#outerGamePad').hide();
 
         this.addListener ('connect', function () {
+          $('body').css('backgroundColor', '');
+          $('body').css('background-image', 'url(../assets/img/background.png)');
+          $('#victoryPannel').hide();
           $('#loadingPannel').fadeOut();
           $('#gameIDInput').fadeOut();
           $('#gamePadWheel').fadeIn();
