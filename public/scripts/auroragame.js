@@ -22,7 +22,7 @@ requirejs([
     './speechMode'
 ], function (GameServer, PlayerManager, Effects, Settings, SoundManager, SpeechMode) {
 
-    var game = new Phaser.Game(Settings.WIDTH, Settings.HEIGHT, Phaser.AUTO, '', {preload: preload, create: create, update: update, render: render}),
+    var game = new Phaser.Game(Settings.WIDTH, Settings.HEIGHT, Phaser.AUTO, 'thegame', {preload: preload, create: create, update: update, render: render}),
         sound = new SoundManager(game),
         vfx = new Effects(game, sound),
         playerManager = new PlayerManager(game, vfx, sound),
@@ -80,6 +80,24 @@ requirejs([
 
         if (Settings.ENABLE_MUSIC) sound.play('music');
 
+
+        setupServer();
+
+        game.add.button(game.world.width - 50, game.world.height - 50, 'fullscreenEnter', toggleFullScreen);
+
+        // restart button, not visible at startup
+        AUR.restart = game.add.text(
+            game.world.centerX, game.world.centerY, "Restart!",
+            { font: "65px monospace", fill: "#ffffff", align: "center" }
+        );
+        AUR.restart.anchor.set(0.5);
+        AUR.restart.alpha = 0;
+        AUR.restart.inputEnabled = true;
+        AUR.restart.events.onInputUp.add(restart, this);
+
+        // vfx uses the sound
+        vfx.init();
+
         var logo = game.add.sprite(game.world.centerX, 240, 'logo');
         logo.anchor.set(0.5);
         logo.scale.set(0.8);
@@ -99,19 +117,6 @@ requirejs([
         // SPEECH!
         if (Settings.ENABLE_SPEECH) speech.defineListeners();
 
-        setupServer();
-
-        game.add.button(game.world.width - 50, game.world.height - 50, 'fullscreenEnter', toggleFullScreen);
-
-        // restart button, not visible at startup
-        AUR.restart = game.add.text(game.world.centerX, game.world.centerY, "Restart!", { font: "65px Arial", fill: "#ffffff", align: "center" });
-        AUR.restart.anchor.set(0.5);
-        AUR.restart.alpha = 0;
-        AUR.restart.inputEnabled = true;
-        AUR.restart.events.onInputUp.add(restart, this);
-
-        // vfx uses the sound
-        vfx.init();
 
     }
 

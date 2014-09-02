@@ -31,26 +31,20 @@ define(['./settings', './map'], function (Settings, Map) {
     };
 
     PlayerManager.prototype.createText = function() {
-        nbText = game.add.text(50, 50, 0);
+        nbText = game.add.text(
+            50, 50, "",
+            { font: "65px monospace", fill: "#ffffff", align: "center" }
+        );
         nbText.anchor.set(0.5);
-        nbText.align = 'center';
-
-        nbText.font = 'Arial';
-        nbText.fontWeight = 'bold';
-        nbText.fontSize = 50;
-        nbText.fill = '#ffffff';
 
         // beat it
         game.add.tween(nbText.scale).to({ 'x': 1.3, 'y': 1.3 }, 200, Phaser.Easing.Cubic.In, true, 0, Number.MAX_VALUE, true);
 
-        gameIDText = game.add.text(Settings.WIDTH - 150, 50, 0);
+        gameIDText = game.add.text(
+            Settings.WIDTH - 150, 50, "",
+            { font: "65px monospace", fill: "#ffffff", align: "center" }
+        );
         gameIDText.anchor.set(0.5);
-        gameIDText.align = 'center';
-
-        gameIDText.font = 'Arial';
-        gameIDText.fontWeight = 'bold';
-        gameIDText.fontSize = 50;
-        gameIDText.fill = '#ffffff';
         gameIDText.alpha = 0; // keep it invisible at init
     };
 

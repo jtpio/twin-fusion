@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 define(['./settings'], function (Settings) {
 
@@ -12,7 +12,7 @@ define(['./settings'], function (Settings) {
 
     var Map = function (g) {
         game = g;
-    }
+    };
 
     Map.prototype.generateExit = function(sprite) {
         if (this.exitTriggered) return;

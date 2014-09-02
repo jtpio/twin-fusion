@@ -1,26 +1,14 @@
 html, body {
   background-color: black;
-}
-#visual {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-}
-#playfield {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-}
-#outer {
-  z-index: 4;
-  left: 0px;
-  top: 0px;
-  color: white;
-  font-size: 50px;
-  font-weight: bolder;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  font-family: monospace;
 }
 
 canvas {
   margin:0 auto;
+}
+
+.credits {
+  font-size: 24px;
+  text-align: center;
+  color: white;
 }
