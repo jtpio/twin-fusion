@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 define(['./settings'], function (Settings) {
 
@@ -6,17 +6,16 @@ define(['./settings'], function (Settings) {
         sound,
         winnerText,
         winnerTween,
-        emitter,
         winnerSpriteTweens = [],
         clouds = [];
 
     var Effects = function (g, s) {
         game = g;
         sound = s;
-    }
+    };
 
     Effects.prototype.init = function() {
-        winnerText = game.add.text(game.world.centerX / 2, 140, "WINNERS!");
+        winnerText = game.add.text(game.world.centerX / 2, 140, 'WINNERS!');
         winnerTween = game.add.tween(winnerText.scale).to({ 'x': 1.3, 'y': 1.3 }, 300, Phaser.Easing.Cubic.In, true, 0, Number.MAX_VALUE, true);
         this.reset();
         this.createClouds();
@@ -68,7 +67,7 @@ define(['./settings'], function (Settings) {
 
         winnerSpriteTweens.forEach(function (t) {
             if (t) t.stop();
-        })
+        });
 
         winnerText.anchor.set(0.5);
         winnerText.align = 'center';

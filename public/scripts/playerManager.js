@@ -32,8 +32,8 @@ define(['./settings', './map'], function (Settings, Map) {
 
     PlayerManager.prototype.createText = function() {
         nbText = game.add.text(
-            50, 50, "",
-            { font: "65px monospace", fill: "#ffffff", align: "center" }
+            50, 50, '',
+            { font: '65px monospace', fill: '#ffffff', align: 'center' }
         );
         nbText.anchor.set(0.5);
 
@@ -41,8 +41,8 @@ define(['./settings', './map'], function (Settings, Map) {
         game.add.tween(nbText.scale).to({ 'x': 1.3, 'y': 1.3 }, 200, Phaser.Easing.Cubic.In, true, 0, Number.MAX_VALUE, true);
 
         gameIDText = game.add.text(
-            Settings.WIDTH - 150, 50, "",
-            { font: "65px monospace", fill: "#ffffff", align: "center" }
+            Settings.WIDTH - 150, 50, '',
+            { font: '65px monospace', fill: '#ffffff', align: 'center' }
         );
         gameIDText.anchor.set(0.5);
         gameIDText.alpha = 0; // keep it invisible at init
@@ -191,7 +191,7 @@ define(['./settings', './map'], function (Settings, Map) {
         p1.sprite.y = posP1.y;
         p2.sprite.x = posP2.x;
         p2.sprite.y = posP2.y;
-    }
+    };
 
     PlayerManager.prototype.setupPlayer = function (p1) {
         if (!this.sprites) return;

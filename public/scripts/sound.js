@@ -1,3 +1,5 @@
+'use strict';
+
 function Sound () {
   this.arraybuffer = null;
   if (!window.context) {
@@ -5,9 +7,9 @@ function Sound () {
         window.context = new webkitAudioContext();
       }
       catch(e) {
-      }     
+      }
   }
-};
+}
 
 Sound.prototype.playSound = function (audioBuffer, repeat) {
     var gainNode = context.createGain();
@@ -37,5 +39,5 @@ Sound.prototype.startSound = function (url, repeat) {
 Sound.prototype.stopSound = function () {
     if (source) {
       source.stop();
-    } 
+    }
 }

@@ -1,24 +1,12 @@
-"use strict";
+'use strict';
 
 define(['./settings'], function (Settings) {
 
     var game,
-        playerManager,
-        final_transcript = '',
-        two_line = /\n\n/g,
-        one_line = /\n/g,
-        first_char = /\S/;
+        playerManager;
 
     var magic = Settings.MAGIC,
         q;
-
-    function linebreak(s) {
-        return s.replace(two_line, '<p></p>').replace(one_line, '<br>');
-    }
-
-    function capitalize(s) {
-        return s.replace(first_char, function(m) { return m.toUpperCase(); });
-    }
 
     var SpeechMode = function (g, pm) {
         game = g;
@@ -32,7 +20,7 @@ define(['./settings'], function (Settings) {
         }
 
         q = this.queue = [];
-    }
+    };
 
     SpeechMode.prototype.defineListeners = function() {
         var self = this;

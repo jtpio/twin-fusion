@@ -1,4 +1,4 @@
-"use strict"
+'use strict';
 
 define(function () {
 
@@ -16,7 +16,7 @@ define(function () {
 		},
 		'MAX_PLAYERS': 20,
 		'ENABLE_SPEECH': false,
-		'MAGIC': "invisible",
+		'MAGIC': 'invisible',
 		'ENABLE_MUSIC': false
 	};
 

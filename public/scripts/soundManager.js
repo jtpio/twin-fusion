@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 define(['./settings'], function (Settings) {
 
@@ -7,7 +7,7 @@ define(['./settings'], function (Settings) {
 
     var SoundManager = function (g) {
         game = g;
-    }
+    };
 
     SoundManager.prototype.loadSounds = function(name, volume, loop) {
         sounds[name] = game.add.audio(name, volume, loop);

@@ -61,99 +61,98 @@ var main = function(GameClient) {
         this.addListener('winner', this.end);
 
         this.addListener('disconnect', function () {
-            alert ("You cannot connect. Please try next game :)");
+            alert ('You cannot connect. Please try next game :)');
         });
-      }
+      };
       return Game;
     })();
 
     var GameControls = (function () {
         function GameControls() {
-          var currentAction = null;
+          this.currentAction = null;
         }
 
         GameControls.prototype.attachUpEvent = function () {
           var _self = this;
-            $("#up").on( "touchstart vmousedown", function () {
-                $("#upPressed").show();
+            $('#up').on( 'touchstart vmousedown', function () {
+                $('#upPressed').show();
                 gameClient.sendCmd('move', { x: 0, y: -1, speed: 5 });
-                _self.sound.startSound("assets/button.mp3");
+                _self.sound.startSound('assets/button.mp3');
 
-                _self.currentAction = "up";
+                _self.currentAction = 'up';
             });
         };
 
         GameControls.prototype.attachDownEvent = function () {
             var _self = this;
-            $("#down").on( "touchstart vmousedown", function () {
-                $("#downPressed").show();
+            $('#down').on( 'touchstart vmousedown', function () {
+                $('#downPressed').show();
                 gameClient.sendCmd('move', {x: 0, y: 1, speed: 5 });
-                _self.sound.startSound("assets/button.mp3");
+                _self.sound.startSound('assets/button.mp3');
 
-                _self.currentAction = "down";
+                _self.currentAction = 'down';
             });
         };
 
         GameControls.prototype.attachLeftEvent = function () {
             var _self = this;
-            $("#left").on( "touchstart vmousedown", function () {
-                $("#leftPressed").show();
+            $('#left').on( 'touchstart vmousedown', function () {
+                $('#leftPressed').show();
                 gameClient.sendCmd('move', {x: -1, y: 0, speed: 5 });
-                _self.sound.startSound("assets/button.mp3");
+                _self.sound.startSound('assets/button.mp3');
 
-                _self.currentAction = "left";
+                _self.currentAction = 'left';
             });
         };
 
         GameControls.prototype.attachRightEvent = function () {
             var _self = this;
-            $("#right").on( "touchstart vmousedown", function () {
-                $("#rightPressed").show();
+            $('#right').on( 'touchstart vmousedown', function () {
+                $('#rightPressed').show();
                 gameClient.sendCmd('move', {x: 1, y: 0, speed: 5 });
-                _self.sound.startSound("assets/button.mp3");
+                _self.sound.startSound('assets/button.mp3');
 
-                _self.currentAction = "right";
+                _self.currentAction = 'right';
             });
         };
 
         GameControls.prototype.attachStopEvent = function () {
             var _self = this;
-            $("#outerGamePad").on( "touchend vmouseup", function (event) {
-                $("#" + event.target.id + "Pressed").hide();
-                if (event.target.id.slice(-7) === "Pressed") {
-                    $("#" + event.target.id).hide();
+            $('#outerGamePad').on( 'touchend vmouseup', function (event) {
+                $('#' + event.target.id + 'Pressed').hide();
+                if (event.target.id.slice(-7) === 'Pressed') {
+                    $('#' + event.target.id).hide();
                 }
 
                 if (_self.currentAction === event.target.id.slice(-7) ||
                   _self.currentAction === event.target.id) {
                   gameClient.sendCmd('stop', { speed: 0 });
-                  _self.currentAction = "";
+                  _self.currentAction = '';
                 }
 
-                if (!($("#upPressed").is(':hidden'))) {
+                if (!($('#upPressed').is(':hidden'))) {
                   gameClient.sendCmd('move', { x: 0, y: -1, speed: 5 });
-                  _self.currentAction = "up";
+                  _self.currentAction = 'up';
                 }
 
-                if (!($("#downPressed").is(':hidden'))) {
+                if (!($('#downPressed').is(':hidden'))) {
                   gameClient.sendCmd('move', { x: 0, y: 1, speed: 5 });
-                  _self.currentAction = "down";
+                  _self.currentAction = 'down';
                 }
 
-                if (!($("#leftPressed").is(':hidden'))) {
+                if (!($('#leftPressed').is(':hidden'))) {
                   gameClient.sendCmd('move', { x: -1, y: 0, speed: 5 });
-                  _self.currentAction = "left";
+                  _self.currentAction = 'left';
                 }
 
-                if (!($("#rightPressed").is(':hidden'))) {
+                if (!($('#rightPressed').is(':hidden'))) {
                   gameClient.sendCmd('move', { x: 1, y: 0, speed: 5 });
-                  _self.currentAction = "right";
+                  _self.currentAction = 'right';
                 }
             });
-        }
+        };
 
         GameControls.prototype.attachEnterKey = function () {
-            var _self = this;
             $('#joinGame').click(function (e) {
               gameClient.sendCmd('gameID', { gameID: $('#gameID').val().toUpperCase() });
             });

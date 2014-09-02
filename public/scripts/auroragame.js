@@ -87,8 +87,8 @@ requirejs([
 
         // restart button, not visible at startup
         AUR.restart = game.add.text(
-            game.world.centerX, game.world.centerY, "Restart!",
-            { font: "65px monospace", fill: "#ffffff", align: "center" }
+            game.world.centerX, game.world.centerY, 'Restart!',
+            { font: '65px monospace', fill: '#ffffff', align: 'center' }
         );
         AUR.restart.anchor.set(0.5);
         AUR.restart.alpha = 0;
