@@ -17,7 +17,7 @@ define(function () {
 		'MAX_PLAYERS': 20,
 		'ENABLE_SPEECH': false,
 		'MAGIC': 'invisible',
-		'ENABLE_MUSIC': false
+		'ENABLE_MUSIC': true
 	};
 
 	return Settings;
