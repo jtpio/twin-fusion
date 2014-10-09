@@ -6,8 +6,7 @@ import (
 )
 
 const (
-	//ABCDEFGHJKLMPQRSTUVWXYZ
-	ALPHABET = "A"
+	ALPHABET = "ABCDEFGHJKLMPQRSTUVWXYZ"
 	N        = len(ALPHABET)
 )
 
