@@ -61,7 +61,7 @@ define(['./settings', './map'], function (Settings, Map) {
     PlayerManager.prototype.add = function(netPlayer) {
         var self = this;
 
-        if (Object.keys(this.players).length < 24) {
+        if (Object.keys(this.players).length < Settings.MAX_PLAYERS) {
             this.queue.push(netPlayer);
         } else {
             netPlayer.sendCmd('disconnect', {'message': 'too many players!'});
@@ -225,10 +225,10 @@ define(['./settings', './map'], function (Settings, Map) {
 
         nbText.setText(Object.keys(this.players).length + this.queue.length);
 
-        game.physics.arcade.collide(this.sprites, this.sprites, function (first, second) {
+        /*game.physics.arcade.collide(this.sprites, this.sprites, function (first, second) {
             var p = this.players[first.pid];
             if (p && p.pair !== second.pid) sound.play('hit0' + game.rnd.integerInRange(2, 4));
-        }, null, this);
+        }, null, this);*/
 
         game.physics.arcade.collide(this.sprites, this.walls, function (player, wall) {
             if (wall.alpha === 0) {
@@ -245,6 +245,35 @@ define(['./settings', './map'], function (Settings, Map) {
         for (var p in this.players) {
             var p1 = this.players[p],
                 p2 = this.players[p1.pair];
+
+            for(var pp in this.players){
+                var p3 = this.players[pp];
+                if(p3 != p2){
+                    var b1 = p1.sprite.body, b2 = p3.sprite.body;
+                    var delta = new Phaser.Point(p1.sprite.x-p3.sprite.x, p1.sprite.y-p3.sprite.y);
+                    var d = delta.getMagnitude();
+                    if(d > 0 && d < Settings.MERGE_DIST/2){
+                        var mtd = delta.multiply(((Settings.MERGE_DIST/2-d)/(d/2)),((Settings.MERGE_DIST/2-d)/(d/2)));
+                        var im1 = 1 / b1.mass;
+                        var im2 = 1 / b2.mass;
+                        p1.sprite.x += mtd.x;
+                        p1.sprite.y += mtd.y;
+                        p3.sprite.x -= mtd.x;
+                        p3.sprite.y -= mtd.y;
+                        var v = new Phaser.Point(b1.velocity.x - b2.velocity.x, b1.velocity.y - b2.velocity.y);
+                        var vn = v.dot(mtd.normalize());
+
+                        if(vn > 0)continue;
+
+                        var i = -2*vn / (im1+im2);
+                        var impulse = mtd.normalize().multiply(i, i);
+
+                        b1.velocity = b1.velocity.add(impulse.x*im1*b1.bounce.x, impulse.y*im1*b1.bounce.y);
+                        b2.velocity = b2.velocity.subtract(impulse.x*im2*b2.bounce.x, impulse.y*im2*b2.bounce.y);
+                        sound.play('hit0' + game.rnd.integerInRange(2, 4));
+                    }
+                }
+            }
 
             if (!p2) continue;
 
