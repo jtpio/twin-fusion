@@ -98,15 +98,16 @@ requirejs([
         // vfx uses the sound
         vfx.init();
 
-        var logo = game.add.sprite(game.world.centerX, 240, 'logo');
+        var logo = game.add.sprite(game.world.centerX, game.world.centerY - 100, 'logo');
         logo.anchor.set(0.5);
         logo.scale.set(0.8);
 
-        var startButton = game.add.sprite(game.world.centerX, game.world.centerY + 160, 'startButton');
+        var startButton = game.add.sprite(game.world.centerX - 1.25, game.world.centerY + 160, 'startButton');
         startButton.anchor.set(0.5);
         startButton.inputEnabled = true;
         startButton.events.onInputUp.add(function () {
             var startTween = game.add.tween(startButton).to({ 'alpha': 0 }, 600, Phaser.Easing.Quadratic.In, true);
+            game.add.tween(logo).to({ 'alpha': 0 }, 600, Phaser.Easing.Quadratic.In, true);
             startTween.onComplete.add(function () {
                 AUR.state = 'PLAY';
                 logo.alpha = 0;
