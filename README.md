@@ -22,6 +22,7 @@ Made with [Phaser](http://phaser.io/)
 * Samanta Miszkiel - Design, Art
 * Dharam Kapila - Programming
 * Jeremy Tuloup - Programming
+* Hussein Taher - Programming
 
 
 # License
