@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	GAME_ID_LENGTH = 7
+	GAME_ID_LENGTH = 3
 )
 
 type game struct {
