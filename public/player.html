@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <title>Player example</title>
+    <meta content="">
+    <style>
+      #changeSize {
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        width: 50%;
+        height: 50%;
+        font-size: 4em;
+      }
+
+      #changeSize {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- HTML elements for example -->
+    <div id="inputArea">
+      <input id="gameID" type="text"> <button onclick="join()"> Join </button>
+    </div>
+
+    <button id="changeSize" onclick="changeSize()"> Click to Morph! </button>
+
+    <!-- socket.io required, keep these two lines before your game scripts -->
+    <script src="//cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="js/gameClient.js"></script>
+
+    <!-- Script for the example -->
+  	<script type="text/javascript">
+
+    var inputArea = document.getElementById('inputArea');
+    var input = document.getElementById('gameID');
+    var size = document.getElementById('changeSize');
+  	var gameClient = new GameClient();
+
+    function join () {
+      gameClient.join(input.value);
+    }
+
+    function changeSize () {
+      gameClient.sendCmd('changeSize', Math.random() * 100 + 100);
+    }
+
+    gameClient.addEventListener('changeColor', function (color) {
+      document.body.style.background = color;
+    });
+
+    gameClient.addEventListener('joined', function () {
+      inputArea.style.display = 'none';
+      size.style.display = "inline";
+    });
+
+  	</script>
+
+  </body>
+</html>

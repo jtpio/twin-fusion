@@ -136,7 +136,7 @@ define(['./settings', './map'], function (Settings, Map) {
         var players = Object.keys(this.players);
         players.forEach(function (pId) {
             self.resetPlayer(self.players[pId]);
-            self.players[pId].conn.sendCmd('connect');
+            self.players[pId].conn.sendCmd('restart');
         });
         players = _.shuffle(players);
         for (var i = 0; i < players.length; i += 2) {

@@ -1,135 +1,125 @@
-'use strict';
+(function () {
 
-define(['./network'], function (Network) {
+  'use strict';
 
-    var host = 'ws://' + window.location.host + '/ws',
-        net = null,
-        type = '',
-        listeners = {},
-        players = {},
-        nbPlayers = 0;
+  var obj = this;
 
-    function sendCmd(cmd, id, data) {
-        net.send({'cmd': cmd, 'playerID': id, 'data': data || {}});
+  var net = null;
+  var listeners = {};
+  var players = {};
+
+  // Handlers
+  function gameID (gameID) {
+    sendEvent('gameID', [gameID]);
+  };
+
+  function addPlayer (msg) {
+    var id = msg.playerID;
+    if (players[id]) return;
+
+    players[id] = new PlayerConnection(id);
+    sendEvent('newPlayer', [players[id]]);
+  };
+
+  function removePlayer  (msg) {
+    var id = msg.playerID;
+    var player = players[id];
+    if (!player) return;
+
+    player.sendEvent('disconnect', []);
+    delete players[id];
+  };
+
+  function updatePlayer (msg) {
+    var player = players[msg.playerID];
+    if (!player) return;
+
+    player.sendEvent(msg.cmd, [msg.data]);
+  };
+
+  // Constructor
+  var GameServer = function () {
+    net = io();
+    // Reserved events
+    net.on('connect', onConnect);
+    net.on('disconnect', onDisconnect);
+    net.on('gameID', gameID);
+    net.on('addPlayer', addPlayer);
+    net.on('removePlayer', removePlayer);
+    net.on('updatePlayer', updatePlayer);
+    net.on('error', console.error);
+  };
+
+  var onConnect = function () {
+    net.emit('type', 'game');
+  };
+
+  var onDisconnect = function () {
+    sendEvent('disconnect');
+    for (var p in players) {
+      removePlayer(p);
     }
+  };
 
-    var GameServer = function (typeOfClient) {
-        type = typeOfClient;
-
-        net = new Network(host);
-        net.on('connect', onConnect);
-        net.on('disconnect', onDisconnect);
-        net.on('message', onMessage);
-        net.on('error', console.error);
-    };
-
-    GameServer.prototype.addEventListener = function (type, callback) {
-        if (!listeners.hasOwnProperty(type)) {
-            listeners[type] = callback;
-        }
-    };
-
-    GameServer.prototype.sendCmd = sendCmd;
-
-    var gameID = function (msg) {
-        var gameID = msg.data.gameID;
-        sendEvent('gameID', [gameID]);
-    };
-
-    var addPlayer = function (msg) {
-        var id = msg.playerID;
-
-        if (players[id]) return;
-
-        players[id] = new PlayerConnection(id);
-        nbPlayers++;
-        sendEvent('playerconnect', [players[id]]);
-    };
-
-    var removePlayer = function (msg) {
-        var id = msg.playerID;
-        var player = players[id];
-
-        if (!player) return;
-
-        player.sendEvent('disconnect', []);
-        delete players[id];
-        nbPlayers--;
-    };
-
-    var updatePlayer = function (msg) {
-        var player = players[msg.playerID];
-
-        if (!player) return;
-
-        player.sendEvent(msg.cmd, [msg.data]);
-    };
-
-    var handlers = {
-        'gameID': gameID,
-        'addPlayer': addPlayer,
-        'removePlayer': removePlayer,
-        'updatePlayer': updatePlayer
-    };
-
-    var onConnect = function () {
-        net.send(type);
-    };
-
-    var onDisconnect = function () {
-        sendEvent('disconnect');
-        for (var p in players) {
-            removePlayer(p);
-        }
-    };
-
-    var onMessage = function (data) {
-        var handler = handlers[data.action];
-        if (handler) {
-            handler(data.data);
-        } else {
-            console.error('Unknown message: ', data);
-        }
-    };
-
-    function sendEvent (type, args) {
-        var callback = listeners[type];
-        if (callback) {
-            callback.apply(callback, args);
-        }
+  var onMessage = function (type, msg) {
+    var handler = handlers[type];
+    if (handler) {
+      handler(msg);
+    } else {
+      console.error('Unknown message: ', type, msg);
     }
+  };
 
-    var PlayerConnection = function(id) {
-        this.id = id;
-        this.handlers = {};
-    };
+  GameServer.prototype.addEventListener = function (type, callback) {
+    if (!listeners.hasOwnProperty(type)) {
+      listeners[type] = callback;
+    }
+  };
 
-    PlayerConnection.prototype.sendCmd = function(cmd, msg) {
-        sendCmd(cmd, this.id, msg || {});
-    };
+  function sendEvent (type, args) {
+    var callback = listeners[type];
+    if (callback) {
+      callback.apply(callback, args);
+    }
+  }
 
-    PlayerConnection.prototype.addEventListener = function(eventType, handler) {
-        this.handlers[eventType] = handler;
-    };
+  var PlayerConnection = function(id) {
+    this.id = id;
+    this.handlers = {};
+  };
 
-    PlayerConnection.prototype.removeEventListener = function(eventType) {
-        this.handlers[eventType] = undefined;
-    };
+  PlayerConnection.prototype.sendCmd = function(cmd, data) {
+    net.emit('updatePlayer', {'cmd': cmd, 'playerID': this.id, 'data': data || {}});
+  };
 
-    PlayerConnection.prototype.removeAllListeners = function() {
-        this.handlers = {};
-    };
+  PlayerConnection.prototype.addEventListener = function(type, handler) {
+    this.handlers[type] = handler;
+  };
 
-    PlayerConnection.prototype.sendEvent = function(eventType, args) {
-        var fn = this.handlers[eventType];
-        if (fn) {
-            fn.apply(this, args);
-        } else {
-            console.error('Unknown Event: ' + eventType);
-        }
-    };
+  PlayerConnection.prototype.removeEventListener = function(type) {
+    this.handlers[type] = undefined;
+  };
 
-    return GameServer;
+  PlayerConnection.prototype.removeAllListeners = function() {
+    this.handlers = {};
+  };
 
-});
+  PlayerConnection.prototype.sendEvent = function(type, args) {
+    var fn = this.handlers[type];
+    if (fn) {
+      fn.apply(this, args);
+    } else {
+      console.info('Unknown Event: ' + type);
+    }
+  };
 
+  if (typeof define !== 'undefined' && define.amd) {
+    obj.GameServer = GameServer;
+    define(function() {
+      return GameServer;
+    });
+  } else {
+    obj.GameServer = GameServer;
+  }
+
+}).call(this);

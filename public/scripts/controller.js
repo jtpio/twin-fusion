@@ -48,7 +48,7 @@ var main = function(GameClient) {
 
             $('#outerGamePad').hide();
 
-            this.addListener ('connect', function () {
+            function startGame () {
                 $('body').css('backgroundColor', '');
                 $('body').css('background-image', 'url(../assets/img/background.png)');
                 $('#victoryPannel').hide();
@@ -56,7 +56,10 @@ var main = function(GameClient) {
                 $('#gameIDInput').fadeOut();
                 $('#outerGamePad').fadeIn();
                 console.log ('player connected');
-            });
+            }
+
+            this.addListener('joined', startGame);
+            this.addListener('restart', startGame);
 
             this.addListener('winner', this.end);
 
@@ -186,7 +189,7 @@ var main = function(GameClient) {
         function GameControls() {}
         GameControls.prototype.attachGameControls = function () {
             $('#joinGame').click(function (e) {
-                gameClient.sendCmd('gameID', { gameID: $('#gameID').val().toUpperCase() });
+                gameClient.join($('#gameID').val().toUpperCase());
             });
         };
         return GameControls;

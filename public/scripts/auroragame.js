@@ -2,17 +2,6 @@
 
 var AUR = AUR || {};
 
-require.config({
-  shim: {
-    'socketio': {
-      exports: 'io'
-    }
-  },
-  paths: {
-    socketio: 'https://cdn.socket.io/socket.io-1.0.6'
-  }
-});
-
 requirejs([
     './gameServer',
     './playerManager',
@@ -33,7 +22,7 @@ requirejs([
         var server = new GameServer('server');
 
         // listeners
-        server.addEventListener('playerconnect', function (netPlayer) {
+        server.addEventListener('newPlayer', function (netPlayer) {
             playerManager.add(netPlayer);
         });
 
@@ -117,7 +106,6 @@ requirejs([
 
         // SPEECH!
         if (Settings.ENABLE_SPEECH) speech.defineListeners();
-
 
     }
 

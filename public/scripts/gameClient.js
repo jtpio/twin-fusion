@@ -1,72 +1,66 @@
-'use strict';
+(function () {
 
-define(['./network'], function (Network) {
+  'use strict';
 
-    var host = 'ws://' + window.location.host + '/ws',
-        type = '',
-        net = null,
-        listeners = {};
+  var obj = this;
 
-    function sendCmd(cmd, data) {
-        net.send({'cmd': cmd, 'data': data || {}});
+  var net = null;
+  var listeners = {};
+
+  var GameClient = function () {
+    net = io();
+    net.on('connect', onConnect);
+    net.on('disconnect', onDisconnect);
+    net.on('message', onMessage);
+    net.on('error', console.error);
+  };
+
+  GameClient.prototype.addEventListener = function (type, callback) {
+    if (!listeners.hasOwnProperty(type)) {
+      listeners[type] = callback;
     }
+  };
 
-    var GameClient = function (typeOfClient) {
-        type = typeOfClient;
+  GameClient.prototype.removeEventListener = function (type) {
+    listeners[type] = undefined;
+  };
 
-        net = new Network(host);
-        net.on('connect', onConnect);
-        net.on('disconnect', onDisconnect);
-        net.on('message', onMessage);
-        net.on('error', console.error);
-    };
+  GameClient.prototype.sendCmd = function (cmd, data) {
+    net.emit('update', {'cmd': cmd, 'data': data || {}});
+  };
 
-    GameClient.prototype.addEventListener = function (type, callback) {
-        if (!listeners.hasOwnProperty(type)) {
-            listeners[type] = callback;
-        }
-    };
+  GameClient.prototype.join = function(gameID) {
+    net.emit('join', gameID);
+  };
 
-    GameClient.prototype.sendCmd = sendCmd;
+  var onConnect = function () {
+    net.emit('type', 'player');
+  };
 
-    var connect = function () {
-        sendEvent('connect');
-    };
+  var onDisconnect = function () {
+    sendEvent('disconnect');
+  };
 
-    var update = function (msg) {
-        sendEvent(msg.cmd, [msg.data]);
-    };
+  var onMessage = function (msg) {
+    sendEvent(msg.cmd, [msg.data]);
+  };
 
-    var handlers = {
-        'connect': connect,
-        'update': update
-    };
-
-    var onConnect = function () {
-        net.send(type);
-    };
-
-    var onDisconnect = function () {
-        sendEvent('disconnect');
-    };
-
-    var onMessage = function (data) {
-        var handler = handlers[data.action];
-        if (handler) {
-            handler(data.data);
-        } else {
-            console.error('Unknown message: ', data);
-        }
-    };
-
-    function sendEvent (type, args) {
-        var callback = listeners[type];
-        if (callback) {
-            callback.apply(callback, args);
-        }
+  function sendEvent (type, args) {
+    var callback = listeners[type];
+    if (callback) {
+      callback.apply(callback, args);
+    } else {
+      console.info('Received event: ' + type + ', not handled');
     }
+  }
 
-    return GameClient;
+  if (typeof define !== 'undefined' && define.amd) {
+    obj.GameClient = GameClient;
+    define(function() {
+      return GameClient;
+    });
+  } else {
+    obj.GameClient = GameClient;
+  }
 
-});
-
+}).call(this);
