@@ -8,8 +8,8 @@ define(function() {
         this.handlers = {};
     };
 
-    PlayerConnection.prototype.sendCmd = function(cmd, msg) {
-        this.server.sendCmd('client', this.id, { cmd: cmd, data: msg || {} });
+    PlayerConnection.prototype.sendCommand = function(cmd, msg) {
+        this.server.sendCommand('client', this.id, { cmd: cmd, data: msg || {} });
     };
 
     PlayerConnection.prototype.addEventListener = function(eventType, handler) {

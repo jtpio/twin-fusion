@@ -64,7 +64,7 @@ define(['./settings', './map'], function (Settings, Map) {
         if (Object.keys(this.players).length < Settings.MAX_PLAYERS) {
             this.queue.push(netPlayer);
         } else {
-            netPlayer.sendCmd('disconnect', {'message': 'too many players!'});
+            netPlayer.sendCommand('disconnect', {'message': 'too many players!'});
             return;
         }
 
@@ -136,7 +136,7 @@ define(['./settings', './map'], function (Settings, Map) {
         var players = Object.keys(this.players);
         players.forEach(function (pId) {
             self.resetPlayer(self.players[pId]);
-            self.players[pId].conn.sendCmd('restart');
+            self.players[pId].conn.sendCommand('restart');
         });
         players = _.shuffle(players);
         for (var i = 0; i < players.length; i += 2) {

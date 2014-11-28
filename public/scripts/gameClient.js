@@ -25,7 +25,7 @@
     listeners[type] = undefined;
   };
 
-  GameClient.prototype.sendCmd = function (cmd, data) {
+  GameClient.prototype.sendCommand = function (cmd, data) {
     net.emit('update', {'cmd': cmd, 'data': data || {}});
   };
 

@@ -153,7 +153,7 @@ var main = function(GameClient) {
         }
         button.click = button.tap = function(data){
             if(!isStatic){
-                gameClient.sendCmd('move', {x: dx[dir], y: dy[dir], speed: 5 });
+                gameClient.sendCommand('move', {x: dx[dir], y: dy[dir], speed: 5 });
                 sound.startSound('assets/button.mp3');
             }
         }

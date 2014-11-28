@@ -40,11 +40,11 @@ define(['./settings'], function (Settings) {
 
             if (!p1.winner && p1.merged && game.physics.arcade.distanceBetween(p1.sprite, this.exit) < Settings.WIN_DIST) {
                 if (p1) {
-                    p1.conn.sendCmd('winner', { color: p1.sprite.tint });
+                    p1.conn.sendCommand('winner', { color: p1.sprite.tint });
                     p1.winner = true;
                 }
                 if (p2) {
-                    p2.conn.sendCmd('winner', { color: p2.sprite.tint });
+                    p2.conn.sendCommand('winner', { color: p2.sprite.tint });
                     p2.winner = true;
                 }
                 return {

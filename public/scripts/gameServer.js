@@ -79,7 +79,7 @@
     this.handlers = {};
   };
 
-  PlayerConnection.prototype.sendCmd = function(cmd, data) {
+  PlayerConnection.prototype.sendCommand = function(cmd, data) {
     net.emit('updatePlayer', {'cmd': cmd, 'playerID': this.id, 'data': data || {}});
   };
 

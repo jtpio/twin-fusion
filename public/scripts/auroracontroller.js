@@ -76,7 +76,7 @@ var main = function(GameClient) {
           var _self = this;
             $('#up').on( 'touchstart vmousedown', function () {
                 $('#upPressed').show();
-                gameClient.sendCmd('move', { x: 0, y: -1, speed: 5 });
+                gameClient.sendCommand('move', { x: 0, y: -1, speed: 5 });
                 _self.sound.startSound('assets/button.mp3');
 
                 _self.currentAction = 'up';
@@ -87,7 +87,7 @@ var main = function(GameClient) {
             var _self = this;
             $('#down').on( 'touchstart vmousedown', function () {
                 $('#downPressed').show();
-                gameClient.sendCmd('move', {x: 0, y: 1, speed: 5 });
+                gameClient.sendCommand('move', {x: 0, y: 1, speed: 5 });
                 _self.sound.startSound('assets/button.mp3');
 
                 _self.currentAction = 'down';
@@ -98,7 +98,7 @@ var main = function(GameClient) {
             var _self = this;
             $('#left').on( 'touchstart vmousedown', function () {
                 $('#leftPressed').show();
-                gameClient.sendCmd('move', {x: -1, y: 0, speed: 5 });
+                gameClient.sendCommand('move', {x: -1, y: 0, speed: 5 });
                 _self.sound.startSound('assets/button.mp3');
 
                 _self.currentAction = 'left';
@@ -109,7 +109,7 @@ var main = function(GameClient) {
             var _self = this;
             $('#right').on( 'touchstart vmousedown', function () {
                 $('#rightPressed').show();
-                gameClient.sendCmd('move', {x: 1, y: 0, speed: 5 });
+                gameClient.sendCommand('move', {x: 1, y: 0, speed: 5 });
                 _self.sound.startSound('assets/button.mp3');
 
                 _self.currentAction = 'right';
@@ -126,27 +126,27 @@ var main = function(GameClient) {
 
                 if (_self.currentAction === event.target.id.slice(-7) ||
                   _self.currentAction === event.target.id) {
-                  gameClient.sendCmd('stop', { speed: 0 });
+                  gameClient.sendCommand('stop', { speed: 0 });
                   _self.currentAction = '';
                 }
 
                 if (!($('#upPressed').is(':hidden'))) {
-                  gameClient.sendCmd('move', { x: 0, y: -1, speed: 5 });
+                  gameClient.sendCommand('move', { x: 0, y: -1, speed: 5 });
                   _self.currentAction = 'up';
                 }
 
                 if (!($('#downPressed').is(':hidden'))) {
-                  gameClient.sendCmd('move', { x: 0, y: 1, speed: 5 });
+                  gameClient.sendCommand('move', { x: 0, y: 1, speed: 5 });
                   _self.currentAction = 'down';
                 }
 
                 if (!($('#leftPressed').is(':hidden'))) {
-                  gameClient.sendCmd('move', { x: -1, y: 0, speed: 5 });
+                  gameClient.sendCommand('move', { x: -1, y: 0, speed: 5 });
                   _self.currentAction = 'left';
                 }
 
                 if (!($('#rightPressed').is(':hidden'))) {
-                  gameClient.sendCmd('move', { x: 1, y: 0, speed: 5 });
+                  gameClient.sendCommand('move', { x: 1, y: 0, speed: 5 });
                   _self.currentAction = 'right';
                 }
             });
@@ -154,7 +154,7 @@ var main = function(GameClient) {
 
         GameControls.prototype.attachEnterKey = function () {
             $('#joinGame').click(function (e) {
-              gameClient.sendCmd('gameID', { gameID: $('#gameID').val().toUpperCase() });
+              gameClient.sendCommand('gameID', { gameID: $('#gameID').val().toUpperCase() });
             });
         };
 

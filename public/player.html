@@ -43,7 +43,7 @@
     }
 
     function changeSize () {
-      gameClient.sendCmd('changeSize', Math.random() * 100 + 100);
+      gameClient.sendCommand('changeSize', Math.random() * 100 + 100);
     }
 
     gameClient.addEventListener('changeColor', function (color) {
