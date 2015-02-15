@@ -40,8 +40,11 @@ requirejs([
         game.load.image('credits', 'assets/img/credits.png');
         game.load.image('wall', 'assets/img/wall.png');
         game.load.image('fullscreenEnter', 'assets/img/fullscreen-enter.png');
+        game.load.image('muteOff', 'assets/img/mute.png');
+        game.load.image('muteOn', 'assets/img/mutePressed.png');
         game.load.image('wall', 'assets/img/wall.png');
         game.load.atlas('spritesheet', 'assets/img/spritesheet.png', 'assets/img/spritesheet.json');
+        game.load.image('dust', "assets/img/dustSprite.png");
 
         // audio
         game.load.audio('hit02', ['assets/sound/hit02.mp3']);
@@ -69,11 +72,20 @@ requirejs([
 
         if (Settings.ENABLE_MUSIC) sound.play('music');
 
-
         setupServer();
 
         game.add.button(game.world.width - 50, game.world.height - 50, 'fullscreenEnter', toggleFullScreen);
 
+        var muteButton = game.add.sprite(18, game.world.height - 50, 'muteOff');
+        muteButton.inputEnabled = true;
+        muteButton.events.onInputUp.add(function(){
+            toggleMusic();
+            if(sound.isPlaying("music")){
+                muteButton.loadTexture('muteOff');
+            }else{
+                muteButton.loadTexture('muteOn');
+            }
+        });
         // restart button, not visible at startup
         AUR.restart = game.add.text(
             game.world.centerX, game.world.centerY, 'Restart!',
@@ -106,7 +118,6 @@ requirejs([
 
         // SPEECH!
         if (Settings.ENABLE_SPEECH) speech.defineListeners();
-
     }
 
     function restart () {
@@ -130,6 +141,9 @@ requirejs([
         } else {
             game.scale.startFullScreen();
         }
+    }
+    function toggleMusic() {
+        sound.toggleSound("music");
     }
 
 });

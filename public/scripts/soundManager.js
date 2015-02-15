@@ -20,6 +20,16 @@ define(['./settings'], function (Settings) {
     SoundManager.prototype.stop = function(name) {
         sounds[name].stop();
     };
+    SoundManager.prototype.isPlaying = function(name){
+        return !sounds[name].paused;
+    }
+    SoundManager.prototype.toggleSound = function(name){
+        if(!sounds[name].paused){
+            sounds[name].pause();
+        }else{
+            sounds[name].resume();
+        }
+    }
 
     return SoundManager;
 

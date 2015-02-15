@@ -84,7 +84,9 @@ define(['./settings', './map'], function (Settings, Map) {
                 self.players[player.pair].conn.removeEventListener();
                 // remove the 2 sprites
                 player.sprite.destroy();
+                player.emitter.destroy();
                 self.players[player.pair].sprite.destroy();
+                self.players[player.pair].emitter.destroy();
                 delete self.players[netPlayer.id];
                 delete self.players[player.pair];
             }
@@ -126,6 +128,7 @@ define(['./settings', './map'], function (Settings, Map) {
     };
 
     PlayerManager.prototype.createGroup = function() {
+        this.emitters = game.add.group();
         this.sprites = game.add.group();
         this.walls = game.add.group();
     };
@@ -207,10 +210,25 @@ define(['./settings', './map'], function (Settings, Map) {
         game.physics.enable(sprite, Phaser.Physics.ARCADE);
         sprite.body.collideWorldBounds = true;
 
+        var emitter = game.add.emitter(200, 200, 2);
+        emitter.makeParticles('dust');
+
+        emitter.setXSpeed(0, 0);
+        emitter.setYSpeed(0, 0);
+
+        emitter.setRotation(0, 360, 500);
+        emitter.setAlpha(1, 0, 1000);
+        emitter.setScale(0.1, 2, 0.1, 2, 1000);
+        emitter.gravity = -200;
+
+        emitter.start(false, 250, 2);
+        this.emitters.add(emitter);
+        
         this.players[p1.id] = {
             'id': p1.id,
             'sprite': sprite,
-            'conn': p1
+            'conn': p1,
+            'emitter': emitter
         };
 
         sprite.pid = p1.id;
@@ -239,6 +257,12 @@ define(['./settings', './map'], function (Settings, Map) {
             }
         }, null, this);
 
+        for(var p in this.players){
+            var p1 = this.players[p];
+            p1.emitter.setAlpha(p1.sprite.body.velocity.getMagnitude()/400, 0, 1000);
+            p1.emitter.emitX = p1.sprite.x;
+            p1.emitter.emitY = p1.sprite.y+(116*p1.sprite.scale.y)/2;
+        }
 
         if (AUR.state !== 'PLAY') return;
 
